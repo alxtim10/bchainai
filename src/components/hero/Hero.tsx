@@ -12,19 +12,20 @@ const Hero = () => {
     isFirstLoad,
     isLoading,
     handleInput,
-    handleKeyDown
+    handleKeyDown,
+    handleRetry
   } = useHero();
 
   return (
     <div className="h-screen flex flex-col items-center justify-between">
-      <h1 className="w-full text-center border-b border-b-[#e7e7e7] font-bold text-theme text-2xl p-3">bchainAI</h1>
+      <h1 className="w-full text-center font-bold text-theme text-2xl p-3">bchainAI</h1>
       {!isFirstLoad && (
         <section className={`flex-1 overflow-y-auto w-full flex flex-col items-center justify-start px-1`}>
           <section className="w-full flex items-center justify-center px-3 md:max-w-[780px]">
             <section className="mb-20 mt-2 w-full">
               {messages.map((message, index) => (
-                <div key={index} className={`${message.isUser ? 'justify-end' : 'justify-start'} flex items-center w-full mt-5`}>
-                  <ChatBubble messages={message} delay={10} />
+                <div key={index} className={`${message.isUser ? 'justify-end' : 'justify-start'} flex items-center w-full mt-2`}>
+                  <ChatBubble messages={message} delay={10} handleRetry={handleRetry}/>
                 </div>
               ))}
             </section>
@@ -41,7 +42,7 @@ const Hero = () => {
         >
           <textarea
             ref={textareaRef}
-            // disabled={isLoading}
+            disabled={isLoading}
             onInput={handleInput}
             value={query}
             onKeyDown={handleKeyDown}
@@ -50,7 +51,7 @@ const Hero = () => {
             className="outline-none focus:outline-none min-h-[30px] resize-none overflow-hidden text-[16px] transition-all duration-200  w-full bg-transparent placeholder:text-[#a3a3a3]"
           />
           <button
-            className="inline-flex absolute right-3 bottom-3 gap-2 border bg-primary rounded-full hover:bg-white hover:shadow-md transition-all p-1 items-center text-sm font-medium"
+            className="inline-flex absolute right-3 bottom-3 gap-2 border bg-theme rounded-full hover:bg-[#4434ac] hover:shadow-md transition-all p-1 items-center text-sm font-medium"
           >
             <ArrowUp size={18} className="text-white" />
           </button>

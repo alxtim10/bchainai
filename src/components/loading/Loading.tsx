@@ -1,12 +1,14 @@
-import Lottie from "lottie-react";
-import animationData from '../../constants/loading.json'
+import React from 'react'
 
 const Loading = () => {
-  return (
-    <div className="flex items-start w-20 -ml-7 -mt-9">
-      <Lottie animationData={animationData} loop autoplay />
-    </div>
-  );
-};
+    return (
+        <div className="loader">
+            <div className="load-inner load-one"></div>
+            <div className="load-inner load-two"></div>
+            <div className="load-inner load-three"></div>
+        </div>
 
-export default Loading;
+  )
+}
+
+export default Loading

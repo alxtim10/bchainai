@@ -2,17 +2,17 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { motion } from 'framer-motion';
 import { Copy, RefreshCw, Volume2 } from "lucide-react";
 import { Tooltip } from 'react-tooltip'
-import Loading from "../loading/Loading";
 import { MessageType } from "../hero/hooks";
 import { speakText } from "@/lib/speech";
+import Loading from "../loading/Loading";
 
 interface ChatBubbleProps {
     messages: MessageType,
     delay: number,
-    // handleRetry: any
+    handleRetry: any
 }
 
-const ChatBubble: React.FC<ChatBubbleProps> = ({ messages, delay = 10 }: ChatBubbleProps) => {
+const ChatBubble: React.FC<ChatBubbleProps> = ({ messages, delay = 10, handleRetry }: ChatBubbleProps) => {
 
     const [htmlContent, setHtmlContent] = useState<any>('');
 
@@ -121,7 +121,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ messages, delay = 10 }: ChatBub
                             data-tooltip-place="bottom-start"
                             className="hover:bg-gray-100 py-1 px-2 rounded-lg  cursor-pointer"
                             onClick={() => {
-                                // handleRetry(messages.id)
+                                handleRetry(messages.id)
                             }}
                         >
                             <RefreshCw

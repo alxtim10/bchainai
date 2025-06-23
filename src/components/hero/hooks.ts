@@ -65,6 +65,7 @@ export const useHero = () => {
         };
 
         setMessages((prev) => [...prev, userMessage, loadingMessage]);
+        setQuery("");
 
         try {
             const response = await fetch("/api/generate", {
@@ -91,12 +92,76 @@ export const useHero = () => {
                 );
             }
         } catch (err: any) {
-            console.log(err.message);
+            console.error("API Error:", err.message || err);
+            setIsLoading(false);
+            setMessages((prev) =>
+                prev.map((m) =>
+                    m.id === loadingMessage.id
+                        ? { ...m, text: "Something went wrong.", isLoading: false, isError: true }
+                        : m
+                )
+            );
         } finally {
-            setQuery("");
             setIsLoading(false);
         }
     };
+
+    const handleRetry = async (id: number) => {
+        const lastUserMessage = [...messages].find(m => m.id === id - 1);
+        const lastBotMessage = [...messages].find(m => m.id === id);
+
+        if (!lastUserMessage || !lastBotMessage) return;
+        setIsLoading(true);
+
+        setMessages(prev =>
+            prev.map((m, i) =>
+                m.id === lastBotMessage.id
+                    ? {
+                        ...m,
+                        isLoading: true,
+                    }
+                    : m
+            )
+        );
+
+        try {
+            const response = await fetch("/api/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ prompt: lastUserMessage.text }),
+            });
+
+            const data: ApiResponse = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Something went wrong!");
+            }
+
+            if (data.output) {
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        m.id === lastBotMessage.id
+                            ? { ...m, text: data.output, isLoading: false }
+                            : m
+                    )
+                );
+            }
+        } catch (err: any) {
+            console.error("API Error:", err.message || err);
+            setIsLoading(false);
+            setMessages((prev) =>
+                prev.map((m) =>
+                    m.id === lastBotMessage.id
+                        ? { ...m, text: "Something went wrong.", isLoading: false, isError: true }
+                        : m
+                )
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
 
 
@@ -108,6 +173,6 @@ export const useHero = () => {
         isLoading,
         handleInput,
         handleKeyDown,
-
+        handleRetry
     }
 }
