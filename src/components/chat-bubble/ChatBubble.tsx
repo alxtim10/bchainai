@@ -5,6 +5,7 @@ import { Tooltip } from 'react-tooltip'
 import { MessageType } from "../hero/hooks";
 import { speakText } from "@/lib/speech";
 import Loading from "../loading/Loading";
+import toast from "react-hot-toast";
 
 interface ChatBubbleProps {
     messages: MessageType,
@@ -75,13 +76,13 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ messages, delay = 10, handleRet
 
             const plainText = getTextWithFormatting(clone).replace(/\n{3,}/g, '\n\n').trim();
 
-            // navigator.clipboard.writeText(plainText)
-            //     .then(() => toast('Berhasil disalin.', {
-            //         style: {
-            //             bottom: '20px'
-            //         }
-            //     }))
-            //     .catch(err => console.error('Failed to copy:', err));
+            navigator.clipboard.writeText(plainText)
+                .then(() => toast('Copied.', {
+                    style: {
+                        bottom: '50px'
+                    }
+                }))
+                .catch(err => console.error('Failed to copy:', err));
 
 
         }
