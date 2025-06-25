@@ -17,14 +17,14 @@ const Hero = () => {
   } = useHero();
 
   return (
-    <div className="h-screen flex flex-col items-center justify-between">
+    <div className="h-[100dvh] flex flex-col items-center justify-between">
       <h1 className="w-full text-center font-bold text-theme text-2xl p-3">bchainAI</h1>
       {!isFirstLoad && (
         <section className={`flex-1 overflow-y-auto w-full flex flex-col items-center justify-start px-1`}>
           <section className="w-full flex items-center justify-center px-3 md:max-w-[780px]">
             <section className="mb-20 mt-2 w-full">
               {messages.map((message, index) => (
-                <div key={index} className={`${message.isUser ? 'justify-end' : 'justify-start'} flex items-center w-full mt-2`}>
+                <div key={index} className={`${message.isUser ? 'justify-end' : 'justify-start'} flex items-center w-full mt-5`}>
                   <ChatBubble messages={message} delay={10} handleRetry={handleRetry}/>
                 </div>
               ))}
@@ -36,10 +36,8 @@ const Hero = () => {
           <div className="ball h-56 w-56"></div>
       )}
       <div className="px-3 pb-8 flex items-center justify-center w-full">
-        <div
-          className="shadow-sm relative pb-12 p-5 bg-[#FBFCFF] border-[#ededed] border -mt-5
-        w-full max-w-[740px] rounded-[24px] min-h-[90px] focus:outline-0 text-sm placeholder:text-sm"
-        >
+        <div className="shadow-md relative pb-12 p-5 bg-[#FBFCFF] border-[#ededed] border -mt-5
+        w-full max-w-[740px] rounded-[24px] min-h-[90px] focus:outline-0 text-sm placeholder:text-sm">
           <textarea
             ref={textareaRef}
             disabled={isLoading}
