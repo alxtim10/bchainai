@@ -1,3 +1,4 @@
+import { ChatMessage } from "@/components/hero/hooks";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { marked } from "marked";
 import { NextResponse } from "next/server";
@@ -5,6 +6,7 @@ import { NextResponse } from "next/server";
 // Define the shape of your request body
 interface GenerateRequest {
   prompt: string;
+  history: ChatMessage[];
 }
 
 // Define the shape of your response data
@@ -15,7 +17,7 @@ interface GenerateResponse {
 
 export async function POST(req: Request): Promise<NextResponse<GenerateResponse>> {
   try {
-    const { prompt }: GenerateRequest = await req.json();
+    const { prompt, history }: GenerateRequest = await req.json();
 
     if (!prompt) {
       return NextResponse.json({ error: "Prompt is required." }, { status: 400 });
@@ -45,8 +47,18 @@ export async function POST(req: Request): Promise<NextResponse<GenerateResponse>
         }
       });
 
-    const result = await model.generateContent(prompt);
+    const chat = model.startChat({
+      history: history,
+      generationConfig: {
+        maxOutputTokens: 2048,
+      }
+    })
+
+    const result = await chat.sendMessage(prompt);
     const responseText = result.response.text();
+
+    // const result = await model.generateContent(prompt);
+    // const responseText = result.response.text();
     const htmlOutput = await marked.parse(responseText);
 
     return NextResponse.json({ output: htmlOutput });

@@ -12,10 +12,20 @@ interface ApiResponse {
     error?: string;
 }
 
+export interface MessagePart {
+    text: string
+}
+
+export interface ChatMessage {
+    role: string;
+    parts: MessagePart[];
+}
+
 export const useHero = () => {
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [messages, setMessages] = useState<MessageType[]>([]);
+    const [tempMessages, setTempMessages] = useState<ChatMessage[]>([]);
     const [query, setQuery] = useState<string>("");
     const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
     const [isLoading, setIsLoading] = useState<boolean>();
@@ -63,8 +73,11 @@ export const useHero = () => {
             text: "...",
             isLoading: true,
         };
-
+        const newUserMessage: ChatMessage = {role: 'user', parts: [{text: query}]};
+        const updatedMessages = [...tempMessages, newUserMessage]
+        
         setMessages((prev) => [...prev, userMessage, loadingMessage]);
+        setTempMessages(updatedMessages);
         setQuery("");
 
         try {
@@ -73,7 +86,7 @@ export const useHero = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ prompt: query }),
+                body: JSON.stringify({ prompt: query, history: tempMessages }),
             });
 
             const data: ApiResponse = await response.json();
@@ -90,6 +103,8 @@ export const useHero = () => {
                             : m
                     )
                 );
+                const modelResponse: ChatMessage = { role: 'model', parts: [{text: data.output}]};
+                setTempMessages([...updatedMessages, modelResponse]);
             }
         } catch (err: any) {
             console.error("API Error:", err.message || err);
@@ -101,6 +116,7 @@ export const useHero = () => {
                         : m
                 )
             );
+            setTempMessages(currentMessages => currentMessages.filter((_, index) => index < currentMessages.length - 1));
         } finally {
             setIsLoading(false);
         }
